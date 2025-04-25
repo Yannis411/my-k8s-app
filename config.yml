@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t yannis411/my-k8s-app:latest .
+            docker build -t yannis411/my-k8s-app:latest
       - run:
           name: Push Docker Image
           command: |
