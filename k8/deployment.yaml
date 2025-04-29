@@ -23,6 +23,6 @@ spec:
     spec:
       containers:
       - name: my-k8s-app
-        image: yannis411/my-k8s-app:latest
+        image: yannis411/my-k8s-app:dev
         ports:
         - containerPort: 3000
