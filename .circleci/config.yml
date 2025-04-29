@@ -12,12 +12,13 @@ jobs:
       - run:
           name: Build Docker Image
           command: |
-            docker build -t yannis411/my-k8s-app:dev .
+            docker build -t yannis411/my-k8s-app:latest .
       - run:
           name: Push Docker Image
           command: |
             docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-            docker push yannis411/my-k8s-app:dev
+            docker push yannis411/my-k8s-app:latest
+  deploy:
     docker:
       - image: python:3.8
     steps:
@@ -29,6 +30,21 @@ jobs:
             chmod +x ./kubectl
             mv ./kubectl /usr/local/bin/kubectl
       - run:
+          name: Set Kubernetes Context
+          command: |
+            kubectl config set-cluster my-cluster --server=https://my-cluster-server:6443
+            kubectl config set-credentials admin --username=admin --password=admin-password
+            kubectl config set-context my-context --cluster=my-cluster --user=admin
+            kubectl config use-context my-context
+      - run:
           name: Deploy to Kubernetes
           command: |
-            kubectl set image deployment/my-k8s-deployment my-container=yannis411/my-k8s-app:dev
+            kubectl set image deployment/my-k8s-deployment my-container=yannis411/my-k8s-app:latest
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
